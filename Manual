@@ -9,6 +9,9 @@ Dependências necessárias:
 - xlwt \\ Módulo para conversão de TXT para XLS
 - xlrd \\ Módulo para conversão de TXT para XLS
 - cv2 \\ Passa a máscara na imagem e retorna apenas a parte utilizada
+- PyInstaller \\ Gera o executável para o script
+- tkinter \\ Interface Gráfica
+
 
 Como usar:
 
