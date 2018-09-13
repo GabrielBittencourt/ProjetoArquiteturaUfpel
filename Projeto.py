@@ -1,5 +1,5 @@
-mypath = "C:\\Users\StupDude\Desktop\goo\\"
-mascaestaaqui = "C:\\Users\StupDude\Desktop\Projeto\QuaseFinal\mascara.jpg"
+mypath = "C:...."
+mascaestaaqui = "C:...mascara.jpg"
 import glob2
 from PIL import Image as PILImage# Importando o módulo Pillow para abrir a imagem no script
 import pytesseract # Módulo para a utilização da tecnologia OCR
