@@ -1,15 +1,15 @@
-mypath = "Caminho do .py (C:....)"
-mascaestaaqui = "Caminho do arquivo mascara.jpg (C:...\mascara.jpg)"
-import glob2
+mypath = "C:\\Diretorio..\\das..\\Contas..\\"
+maskpath = "C:\\Diretorio..\\para..\\mascara.jpg"
+
+import glob2 #Módulo glob para abrir todos os arquivos .xyz do diretorio
 from PIL import Image as PILImage# Importando o módulo Pillow para abrir a imagem no script
 import pytesseract # Módulo para a utilização da tecnologia OCR
-import cv2
-from wand.image import Image
+import cv2 #Resize
+from wand.image import Image #PDF para JPG
 from os import listdir
 from os.path import isfile, join
 import os
-import xlwt
-import xlrd
+import csv
 
 i = 0
 j = 0
@@ -37,7 +37,7 @@ for f in listdir(mypath):
 # -- mascara
 
 i=0
-img1 = cv2.imread(mascaestaaqui)
+img1 = cv2.imread(maskpath)
 try:
 	for img2 in listdir(mypath):
 		img2 = cv2.imread('contabaixaresized'+str(i+1)+'.jpg')
@@ -51,19 +51,48 @@ except:
 # -- jpg2txt
 
 i=1
+vetortemplate = ['Numero da UC', 'Consumo', 'Faturamento', 'Vencimento', 'Total em Reais\n']
 try:
 	for text in listdir(mypath):
-		text = pytesseract.image_to_string(PILImage.open('contabaixa_mascara'+str(i)+'.jpg'), -psm 11) # Extraindo o texto da imagem
-		file = open("contabaixatxt" + str(i) + ".txt","w")
-		file.write(text)
-		print(text)
+		vetor = []
+		text = pytesseract.image_to_string(PILImage.open('contabaixa_mascara'+str(i)+'.jpg')) # Extraindo o texto da imagem
+		vetor = vetortemplate + text.split()
+		
+		vetor[9] = vetor[9]+' '+vetor[10]
+		vetor.pop(10)
+
+		file = open("contabaixatxt" + str(i) + ".txt","a")
+		
 		i=i+1
+		
+		if i == 2:
+			j=0
+		else:
+			j=5
+
+		while j < len(vetor):
+			if vetor[j] == 'Total':
+				file.write("")
+			elif vetor[j] == 'em':
+				file.write("")
+			elif vetor[j] == 'Reais':
+				file.write("")
+			elif vetor[j] == 'Total em Reais\n':
+				file.write(vetor[j])
+			elif j==len(vetor)-1:
+				file.write(vetor[j])
+			else:
+				file.write(vetor[j]+';')
+			
+			j += 1
+		
 except:
 	pass
 
 # -- concat
 
 filenames = glob2.glob(mypath + '*.txt')
+
 try:
 	with open('saida.txt', 'w') as f:
 	    for file in filenames:
@@ -73,43 +102,16 @@ try:
 except:
 	pass
 
-# -- xls
+# txt 2 csv
 
-textfiles = [ join(mypath,f) for f in listdir(mypath) if isfile(join(mypath,f)) and '.txt' in  f]
+with open('saida.txt', 'r') as in_file:
+    stripped = (line.strip() for line in in_file)
+    lines = (line.split(",") for line in stripped if line)
+    with open('saida2.csv', 'w') as out_file:
+        writer = csv.writer(out_file)
+        writer.writerows(lines)
 
-def is_number(s):
-    try:
-        float(s)
-        return True
-    except ValueError:
-        return False        
-
-
-style = xlwt.XFStyle()
-style.num_format_str = '###000'  
-
-for textfile in textfiles:
-    f = open(textfile, 'r+')
-    row_list = []
-    for row in f:
-        row_list.append(row.split('|'))
-    column_list = zip(*row_list)
-    workbook = xlwt.Workbook()
-    worksheet = workbook.add_sheet('Sheet1')
-    i = 0
-    for column in column_list:
-        for item in range(len(column)):
-            value = column[item].strip()
-            if is_number(value):
-                worksheet.write(item, i, float(value), style=style)
-            else:
-                worksheet.write(item, i, value)
-        i+=1
-    workbook.save(textfile.replace('.txt', '.xls'))
-
+# Remove jpg
 filenames = glob2.glob(mypath + '*.jpg')
 for file in filenames:
-	if(file != 'mascara.jpg'):
-		os.remove(file)
-# except:
-# 	pass
+	os.remove(file)
