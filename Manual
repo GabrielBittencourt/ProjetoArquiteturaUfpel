@@ -1,13 +1,12 @@
 Dependências necessárias:
 
 - ImageMagick 6.2.10-2 x6 \\ Contém o wand
-- pytesseract \\ Extrai texto de uma imagem
 - wand \\ Converte PDF para JPG
+- pytesseract \\ Extrai texto de uma imagem
 - pillow \\ Usado para abrir a imagem
 - glob2 \\ Pega todos arquivos do tipo TXT de um mesmo diretório
 - os \\ Pega todos arquivos do mesmo tipo de um diretório
-- xlwt \\ Módulo para conversão de TXT para XLS
-- xlrd \\ Módulo para conversão de TXT para XLS
+- csv \\ Conversão de txt para csv (Vem com o python)
 - cv2 \\ Passa a máscara na imagem e retorna apenas a parte utilizada
 - PyInstaller \\ Gera o executável para o script
 - tkinter \\ Interface Gráfica
@@ -24,7 +23,7 @@ A interface conta com 3 botões:
 --- Diretório ---
 
   Serve para escolher o diretório em que se encontram as contas.
-  Irá converter todos os arquivos do tipo PDF para XLS contidos na pasta.
+  Irá converter todos os arquivos do tipo PDF para CSV contidos na pasta.
  
 
 --- Conta Baixa ---
@@ -42,4 +41,4 @@ o programa irá executar e colocar o resultado em um único arquivo XLS, que fic
 armazenado na pasta escolhida com as contas.
 
 
-2018  Todos os direitos reservados
+2018 - Todos os direitos reservados.
