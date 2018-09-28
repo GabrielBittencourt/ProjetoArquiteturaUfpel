@@ -1,5 +1,5 @@
-mypath = "C:\\Diretorio..\\das..\\Contas..\\"
-maskpath = "C:\\Diretorio..\\para..\\mascara.jpg"
+mypath = "C:\\Users\\xBitt\\Desktop\\contas\\"
+maskpath = "C:\\Users\\xBitt\\Desktop\\mascara.jpg"
 
 import glob2 #Módulo glob para abrir todos os arquivos .xyz do diretorio
 from PIL import Image as PILImage# Importando o módulo Pillow para abrir a imagem no script
@@ -13,24 +13,30 @@ import csv
 
 i = 0
 j = 0
-
+numeroUC = []
 # pdf2jpg
 for f in listdir(mypath):
 	if f.endswith('.pdf'):
+		numeroUC.insert(i, os.path.basename(os.path.splitext(f)[0]))
 		i=i+1
 		with Image(filename=f, resolution=200) as img:
 			img.compression_quality = 99
-			img.save(filename="contabaixa"+str(i)+".jpg")
+			if i < 10:
+				img.save(filename="contabaixa"+str(0)+str(i)+".jpg")
+			else:
+				img.save(filename="contabaixa"+str(i)+".jpg")
 	else:
 		pass
-
 # Resizing
 for f in listdir(mypath):
 	if f.endswith('0.jpg'):
 		j=j+1
 		with Image(filename=f) as img:
 		    img.resize(2480, 3508)
-		    img.save(filename= "contabaixaresized"+str(j)+".jpg")
+		    if j < 10:
+		    	img.save(filename= "contabaixaresized"+str(0)+str(j)+".jpg")
+		    else:
+		    	img.save(filename= "contabaixaresized"+str(j)+".jpg")
 	else:
 		pass
 
@@ -40,28 +46,40 @@ i=0
 img1 = cv2.imread(maskpath)
 try:
 	for img2 in listdir(mypath):
-		img2 = cv2.imread('contabaixaresized'+str(i+1)+'.jpg')
-		dst = img1 & img2
-		gray = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
-		cv2.imwrite('contabaixa_mascara'+str(i+1)+'.jpg', gray)
-		i=i+1
+		if i < 9:
+			img2 = cv2.imread('contabaixaresized'+str(0)+str(i+1)+'.jpg')
+			dst = img1 & img2
+			gray = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
+			cv2.imwrite('contabaixa_mascara'+str(0)+str(i+1)+'.jpg', gray)
+			i=i+1
+		else:
+			img2 = cv2.imread('contabaixaresized'+str(i+1)+'.jpg')
+			dst = img1 & img2
+			gray = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
+			cv2.imwrite('contabaixa_mascara'+str(i+1)+'.jpg', gray)
+			i=i+1
 except:
 	pass
 
 # -- jpg2txt
 
 i=1
-vetortemplate = ['Numero da UC', 'Consumo', 'Faturamento', 'Vencimento', 'Total em Reais\n']
+vetortemplate = ['Numero da UC', 'Consumo kWh', 'Faturamento', 'Vencimento', 'Total em Reais\n']
 try:
 	for text in listdir(mypath):
 		vetor = []
-		text = pytesseract.image_to_string(PILImage.open('contabaixa_mascara'+str(i)+'.jpg')) # Extraindo o texto da imagem
+		if i < 10:
+			text = pytesseract.image_to_string(PILImage.open('contabaixa_mascara'+str(0)+str(i)+'.jpg')) # Extraindo o texto da imagem
+		else:
+			text = pytesseract.image_to_string(PILImage.open('contabaixa_mascara'+str(i)+'.jpg')) # Extraindo o texto da imagem
 		vetor = vetortemplate + text.split()
-		
-		vetor[9] = vetor[9]+' '+vetor[10]
+		vetor.insert(5, numeroUC[i-1])
+		# vetor[9] = vetor[9]+' '+vetor[10]
 		vetor.pop(10)
-
-		file = open("contabaixatxt" + str(i) + ".txt","a")
+		if i < 10:
+			file = open("contabaixatxt" + str(0) + str(i) + ".txt","a")
+		else:
+			file = open("contabaixatxt" + str(i) + ".txt","a")
 		
 		i=i+1
 		
@@ -107,7 +125,7 @@ except:
 with open('saida.txt', 'r') as in_file:
     stripped = (line.strip() for line in in_file)
     lines = (line.split(",") for line in stripped if line)
-    with open('saida2.csv', 'w') as out_file:
+    with open('saida2.csv', 'w', newline='') as out_file:
         writer = csv.writer(out_file)
         writer.writerows(lines)
 
