@@ -1,6 +1,6 @@
 # ProjetoArquiteturaUfpel
 
-Script criado em Python para conversão de contas de luz em PDF para XLS.
+Script criado em Python para conversão de contas de luz em PDF para CSV.
 
 Participantes:
 
