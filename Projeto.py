@@ -1,5 +1,5 @@
-mypath = "C:\\Users\\xBitt\\Desktop\\contas\\"
-maskpath = "C:\\Users\\xBitt\\Desktop\\mascara.jpg"
+mypath = "C:\\Users\\LABCEE9\\Desktop\\contas\\"
+maskpath = "C:\\Users\\LABCEE9\\Desktop\\mascara.jpg"
 
 import glob2 #Módulo glob para abrir todos os arquivos .xyz do diretorio
 from PIL import Image as PILImage# Importando o módulo Pillow para abrir a imagem no script
@@ -22,6 +22,8 @@ for f in listdir(mypath):
 		with Image(filename=f, resolution=200) as img:
 			img.compression_quality = 99
 			if i < 10:
+				img.save(filename="contabaixa"+str(0)+ str(0) +str(i)+".jpg")
+			elif i < 100:
 				img.save(filename="contabaixa"+str(0)+str(i)+".jpg")
 			else:
 				img.save(filename="contabaixa"+str(i)+".jpg")
@@ -32,9 +34,12 @@ for f in listdir(mypath):
 	if f.endswith('0.jpg'):
 		j=j+1
 		with Image(filename=f) as img:
-		    img.resize(2480, 3508)
+		    #img.resize(2480, 3508)
+		    img.resize(1800, 2546)
 		    if j < 10:
-		    	img.save(filename= "contabaixaresized"+str(0)+str(j)+".jpg")
+		    	img.save(filename= "contabaixaresized"+str(0)+ str(0) +str(j)+".jpg")
+		    elif j < 100:
+		    	img.save(filename= "contabaixaresized"+str(0)+str(j)+".jpg")		    		
 		    else:
 		    	img.save(filename= "contabaixaresized"+str(j)+".jpg")
 	else:
@@ -47,6 +52,12 @@ img1 = cv2.imread(maskpath)
 try:
 	for img2 in listdir(mypath):
 		if i < 9:
+			img2 = cv2.imread('contabaixaresized'+str(0)+ str(0) +str(i+1)+'.jpg')
+			dst = img1 & img2
+			gray = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
+			cv2.imwrite('contabaixa_mascara'+str(0)+ str(0) +str(i+1)+'.jpg', gray)
+			i=i+1
+		elif i < 99:
 			img2 = cv2.imread('contabaixaresized'+str(0)+str(i+1)+'.jpg')
 			dst = img1 & img2
 			gray = cv2.cvtColor(dst, cv2.COLOR_BGR2GRAY)
@@ -69,18 +80,22 @@ try:
 	for text in listdir(mypath):
 		vetor = []
 		if i < 10:
-			text = pytesseract.image_to_string(PILImage.open('contabaixa_mascara'+str(0)+str(i)+'.jpg')) # Extraindo o texto da imagem
+			text = pytesseract.image_to_string(PILImage.open('contabaixa_mascara'+str(0)+ str(0) +str(i)+'.jpg')) # Extraindo o texto da imagem
+		elif i < 100:
+				text = pytesseract.image_to_string(PILImage.open('contabaixa_mascara'+str(0)+str(i)+'.jpg')) # Extraindo o texto da imagem
 		else:
 			text = pytesseract.image_to_string(PILImage.open('contabaixa_mascara'+str(i)+'.jpg')) # Extraindo o texto da imagem
 		vetor = vetortemplate + text.split()
 		vetor.insert(5, numeroUC[i-1])
 		# vetor[9] = vetor[9]+' '+vetor[10]
 		vetor.pop(10)
+		
 		if i < 10:
+			file = open("contabaixatxt" + str(0) + str(0) + str(i) + ".txt","a")
+		elif i < 100:
 			file = open("contabaixatxt" + str(0) + str(i) + ".txt","a")
 		else:
-			file = open("contabaixatxt" + str(i) + ".txt","a")
-		
+			file = open("contabaixatxt" + str(i) + ".txt","a")	
 		i=i+1
 		
 		if i == 2:
@@ -88,6 +103,7 @@ try:
 		else:
 			j=5
 
+		
 		while j < len(vetor):
 			if vetor[j] == 'Total':
 				file.write("")
@@ -98,12 +114,30 @@ try:
 			elif vetor[j] == 'Total em Reais\n':
 				file.write(vetor[j])
 			elif j==len(vetor)-1:
-				file.write(vetor[j])
+				try:
+					
+					if (j==13):
+						
+						k=vetor[12]+vetor[13]
+						vetor.pop(12)
+						vetor.pop(12)
+						
+						file.write(k)
+						
+					else:
+						file.write(vetor[j])
+				except:
+					pass
+				
 			else:
-				file.write(vetor[j]+';')
-			
+				if((len(vetor)==14) and (j==12)):
+					file.write("")
+				else:
+					file.write(vetor[j]+';')
+					pass
 			j += 1
-		
+
+		#print(file)
 except:
 	pass
 
