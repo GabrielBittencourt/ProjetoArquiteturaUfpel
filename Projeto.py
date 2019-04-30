@@ -113,6 +113,34 @@ try:
 				file.write("")
 			elif vetor[j] == 'Total em Reais\n':
 				file.write(vetor[j])
+			
+			elif (j == 10):
+				if (len(vetor[10]) < 7):
+					fat = vetor[10] + vetor[11]
+					vetor.pop(10)
+					vetor.pop(10)
+					while len(fat) < 7:
+						fat = fat + vetor[10]
+						vetor.pop(10)
+					file.write(fat)
+					temp = ';' + vetor[-1]
+					vetor.pop(-1)
+				print(temp)
+				print(fat)
+				print(vetor[10])
+				print(vetor)
+				
+				if (len(vetor[10]) < 10):
+					r = vetor[10] + vetor[11]
+					vetor.pop(10)
+					vetor.pop(10)
+					while len(r) < 10:
+						r = r + vetor[10]
+						vetor.pop(10)
+					r = ";" + r
+					file.write(r)
+					file.write(temp)	
+			
 			elif j==len(vetor)-1:
 				try:
 					
