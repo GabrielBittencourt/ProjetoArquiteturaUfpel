@@ -89,7 +89,7 @@ try:
 		vetor.insert(5, numeroUC[i-1])
 		# vetor[9] = vetor[9]+' '+vetor[10]
 		vetor.pop(10)
-		
+		print(vetor)
 		if i < 10:
 			file = open("contabaixatxt" + str(0) + str(0) + str(i) + ".txt","a")
 		elif i < 100:
@@ -113,8 +113,8 @@ try:
 				file.write("")
 			elif vetor[j] == 'Total em Reais\n':
 				file.write(vetor[j])
-			
-			elif (j == 10):
+
+			elif (j == 10 and len(vetor) > 13):
 				if (len(vetor[10]) < 7):
 					fat = vetor[10] + vetor[11]
 					vetor.pop(10)
@@ -122,13 +122,9 @@ try:
 					while len(fat) < 7:
 						fat = fat + vetor[10]
 						vetor.pop(10)
-					file.write(fat)
-					temp = ';' + vetor[-1]
-					vetor.pop(-1)
-				print(temp)
-				print(fat)
-				print(vetor[10])
-				print(vetor)
+				else:
+					fat = vetor[10]
+					vetor.pop(10)
 				
 				if (len(vetor[10]) < 10):
 					r = vetor[10] + vetor[11]
@@ -138,24 +134,23 @@ try:
 						r = r + vetor[10]
 						vetor.pop(10)
 					r = ";" + r
-					file.write(r)
-					file.write(temp)	
-			
-			elif j==len(vetor)-1:
-				try:
-					
-					if (j==13):
-						
-						k=vetor[12]+vetor[13]
-						vetor.pop(12)
-						vetor.pop(12)
-						
-						file.write(k)
-						
-					else:
-						file.write(vetor[j])
-				except:
-					pass
+				else:
+					r = ";" + vetor[10]
+					vetor.pop(10)
+
+				if (len(vetor) > 11):
+					k = vetor[10] + vetor[11]
+					vetor.pop(10)
+					vetor.pop(10)
+					while len(vetor) > 11:
+						k = k + vetor[10]
+						vetor.pop(10)
+					k = ";" + k
+				else:
+					k = ";" + vetor[10]
+				file.write(fat)
+				file.write(r)
+				file.write(k)
 				
 			else:
 				if((len(vetor)==14) and (j==12)):
@@ -195,3 +190,4 @@ with open('saida.txt', 'r') as in_file:
 filenames = glob2.glob(mypath + '*.jpg')
 for file in filenames:
 	os.remove(file)
+
